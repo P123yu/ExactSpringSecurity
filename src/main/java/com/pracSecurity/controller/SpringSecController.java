@@ -31,7 +31,7 @@ public class SpringSecController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterModel registerModel) {
         System.out.println("hello");
-        RegisterModel register=springServiceImpl.register(registerModel);
+        String register=springServiceImpl.register(registerModel);
         if(register!=null) {
             return ResponseEntity.ok(register);
         }

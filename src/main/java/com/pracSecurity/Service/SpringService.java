@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 public interface SpringService {
 
     // Register   // save // post
-    RegisterModel register(RegisterModel registerModel);
+//    RegisterModel register(RegisterModel registerModel);
+    String register(RegisterModel registerModel);
 
 
     // Login

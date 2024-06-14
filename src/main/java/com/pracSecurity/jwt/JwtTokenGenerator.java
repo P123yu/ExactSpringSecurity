@@ -1,0 +1,57 @@
+package com.pracSecurity.jwt;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.*;
+import java.util.Collection;
+
+@Component
+public class JwtTokenGenerator {
+
+
+
+    @Value("${Secret_String}")
+    public String my_secretKey;
+       // generate Jwt Token
+
+    public String generateToken(UserDetails user){
+        return Jwts.builder().subject(user.getUsername())  // mohit
+                .claim("authorities",getAuthorities(user.getAuthorities()))  // role_mgr,role_usr
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*1000))
+                .signWith(getKey(), SignatureAlgorithm.HS256).compact();
+    }
+
+
+    public String getAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        Set<String> setAuth = new HashSet<>();
+        for (GrantedAuthority grantAuth : authorities) {
+            // adding the string of role "mgr" ,"usr" ,"mgr"
+            setAuth.add(grantAuth.getAuthority());   // [ROLE_mgr,ROLE_usr]   => it is collection of HashSet
+        }
+        return String.join(",", setAuth);  // convert the HashSet to string separated by comma
+    }
+
+
+
+    // convert hexadecimal string into bits of array
+
+    public Key getKey(){
+        byte []secretArray=Decoders.BASE64.decode(my_secretKey);
+        return Keys.hmacShaKeyFor(secretArray);
+    }
+
+
+
+
+
+
+}
