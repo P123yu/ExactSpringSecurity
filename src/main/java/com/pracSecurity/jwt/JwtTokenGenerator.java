@@ -1,5 +1,6 @@
 package com.pracSecurity.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.*;
 import java.util.Collection;
+import java.util.function.Function;
 
 @Component
 public class JwtTokenGenerator {
@@ -52,6 +54,25 @@ public class JwtTokenGenerator {
 
 
 
+    // filter   ======================================================================================
 
+    // extract all claims present in token
+    private Claims extractAllClaims(String token){
+        return Jwts.parser().setSigningKey(getKey())
+                .build().parseClaimsJws(token).getBody();
+    }
+
+    // token => extractAll claims => resolve only subject claim (username)  [extractUserName]
+
+    // i am extracting all the claims from the token
+    public <T> T extractClaims(String token, Function<Claims,T> claimsResolver){
+        Claims claims=extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    // and from those claims i want only subject that is userName
+    public String extractUsername(String token){
+        return extractClaims(token,Claims::getSubject);
+    }
 
 }

@@ -1,5 +1,5 @@
 package com.pracSecurity.config;
-
+import com.pracSecurity.jwt.JwtFilter;
 import com.pracSecurity.serviceimpl.SpringServiceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,17 +13,35 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 public class SpringConfig {
 
 
+//    // step 1
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//        return httpSecurity.csrf(csrf-> csrf.disable()).authorizeHttpRequests(req->
+//                req.requestMatchers("register","login","get").permitAll()
+//        ).build();
+//    }
+
+
     // step 1
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(csrf-> csrf.disable()).authorizeHttpRequests(req->
                 req.requestMatchers("register","login","get").permitAll()
-        ).build();
+        )
+                .sessionManagement(session->session.sessionCreationPolicy(STATELESS)).
+                addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     // convert plain text password into Bcryptpassword
