@@ -18,8 +18,6 @@ import java.util.function.Function;
 @Component
 public class JwtTokenGenerator {
 
-
-
     @Value("${Secret_String}")
     public String my_secretKey;
        // generate Jwt Token

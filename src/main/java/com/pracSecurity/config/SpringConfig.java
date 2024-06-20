@@ -10,10 +10,14 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static com.pracSecurity.Model.Role.MANAGER;
+import static com.pracSecurity.Model.Role.USER;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -35,14 +39,20 @@ public class SpringConfig {
     private JwtFilter jwtFilter;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(csrf-> csrf.disable()).authorizeHttpRequests(req->
-                req.requestMatchers("register","login","get").permitAll()
-        )
-                .sessionManagement(session->session.sessionCreationPolicy(STATELESS)).
-                addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+        return httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/register", "/login", "/get").permitAll()
+                        .requestMatchers("/manager/**").hasRole(MANAGER.name())
+                        .requestMatchers("/user/**").hasRole(USER.name())
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     // convert plain text password into Bcryptpassword
 
