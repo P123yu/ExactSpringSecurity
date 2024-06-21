@@ -54,7 +54,13 @@ public class JwtTokenGenerator {
 
     // filter   ======================================================================================
 
-     // token => extractAll claims => resolve only subject claim (username)  [extractUserName]
+    // and from those claims i want only subject that is userName
+    public String extractUsername(String token){
+        return extractClaims(token,Claims::getSubject);
+    }
+
+    
+    // token => extractAll claims => resolve only subject claim (username)  [extractUserName]
 
     // i am extracting all the claims from the token
     public <T> T extractClaims(String token, Function<Claims,T> claimsResolver){
@@ -69,9 +75,6 @@ public class JwtTokenGenerator {
     }
 
    
-    // and from those claims i want only subject that is userName
-    public String extractUsername(String token){
-        return extractClaims(token,Claims::getSubject);
-    }
+ 
 
 }
