@@ -54,13 +54,7 @@ public class JwtTokenGenerator {
 
     // filter   ======================================================================================
 
-    // extract all claims present in token
-    private Claims extractAllClaims(String token){
-        return Jwts.parser().setSigningKey(getKey())
-                .build().parseClaimsJws(token).getBody();
-    }
-
-    // token => extractAll claims => resolve only subject claim (username)  [extractUserName]
+     // token => extractAll claims => resolve only subject claim (username)  [extractUserName]
 
     // i am extracting all the claims from the token
     public <T> T extractClaims(String token, Function<Claims,T> claimsResolver){
@@ -68,6 +62,13 @@ public class JwtTokenGenerator {
         return claimsResolver.apply(claims);
     }
 
+    // extract all claims present in token
+    private Claims extractAllClaims(String token){
+        return Jwts.parser().setSigningKey(getKey())
+                .build().parseClaimsJws(token).getBody();
+    }
+
+   
     // and from those claims i want only subject that is userName
     public String extractUsername(String token){
         return extractClaims(token,Claims::getSubject);
