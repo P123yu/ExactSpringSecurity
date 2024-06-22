@@ -1,8 +1,12 @@
 package com.pracSecurity.controller;
 
 
+import com.pracSecurity.Model.DtoModel;
 import com.pracSecurity.Model.LoginModel;
+import com.pracSecurity.Model.RefreshModel;
 import com.pracSecurity.Model.RegisterModel;
+import com.pracSecurity.jwt.JwtTokenGenerator;
+import com.pracSecurity.serviceimpl.RefreshServiceImpl;
 import com.pracSecurity.serviceimpl.SpringServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,5 +57,24 @@ public class SpringSecController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not login");
         }
+    }
+
+
+    @Autowired
+    private RefreshServiceImpl refreshServiceImpl;
+
+    @Autowired
+    private JwtTokenGenerator jwtTokenGenerator;
+
+    // refreshToken
+    @PostMapping("/refresh/{refreshToken}")
+    public  DtoModel generateTokenBasedOnRefreshToken(@PathVariable String refreshToken) {
+        RefreshModel refresh=refreshServiceImpl.verifyRefreshToken(refreshToken);
+        RegisterModel register=refresh.getRegisterModel();
+            String jwtToken=jwtTokenGenerator.generateToken(register);
+            DtoModel ref=new DtoModel();
+            ref.setJwtToken(jwtToken);
+            ref.setRefreshToken(refresh.getRefreshToken());
+        return ref;
     }
 }

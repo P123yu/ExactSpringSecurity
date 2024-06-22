@@ -20,13 +20,14 @@ public class JwtTokenGenerator {
 
     @Value("${Secret_String}")
     public String my_secretKey;
-       // generate Jwt Token
+
+    // generate Jwt Token
 
     public String generateToken(UserDetails user){
         return Jwts.builder().subject(user.getUsername())  // mohit
                 .claim("authorities",getAuthorities(user.getAuthorities()))  // role_mgr,role_usr
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*1000))
+                .setExpiration(new Date(System.currentTimeMillis()+ 60*1000))
                 .signWith(getKey(), SignatureAlgorithm.HS256).compact();
     }
 

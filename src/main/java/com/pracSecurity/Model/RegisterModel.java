@@ -1,5 +1,6 @@
 package com.pracSecurity.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +34,15 @@ public class RegisterModel implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+
+
+
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registerModel", fetch = FetchType.LAZY)
+    private RefreshModel refreshModel;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -38,7 +38,7 @@ public class SpringConfig {
         return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("register", "login", "get").permitAll()
+                        .requestMatchers("register", "login", "refresh/**").permitAll()
                         .requestMatchers("manager/**").hasRole(MANAGER.name())
                         .requestMatchers("user/**").hasRole(USER.name())
                         .anyRequest().authenticated()
