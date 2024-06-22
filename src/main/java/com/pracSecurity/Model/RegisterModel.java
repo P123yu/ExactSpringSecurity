@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
 @Entity
 @Table(name="user_register")
 @Getter
@@ -25,7 +24,7 @@ import java.util.List;
 public class RegisterModel implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
 
     String userName;
@@ -39,6 +38,8 @@ public class RegisterModel implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));
     }
+
+
 
     @Override
     public String getPassword() {

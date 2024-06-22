@@ -1,19 +1,23 @@
-package com.pracSecurity.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+package com.pracSecurity.controller;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/manager")
 @CrossOrigin
 public class ManagerController {
 
-    @GetMapping("/get")
-    public String message(){
-        return "manager get";
+    @GetMapping("/create")
+    public String createAdminResource() {
+        return "create";
     }
 
-
+    @GetMapping("/read")
+    public String readAdminResource() {
+        return "read";
+    }
 }
+
+
+
+
