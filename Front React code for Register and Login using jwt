@@ -1,4 +1,30 @@
 
+
+                                                                          JWT ROLE BASED REGISTER AND LOGIN VIA REACT
+// App.js
+
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import Login from "./Login";
+import Register from "./Register";
+
+function App() {
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
+
+=========================================================================================================================================================================
 // React Register
 
 import axios from "axios";
@@ -92,3 +118,8 @@ function Login() {
 }
 
 export default Login;
+
+
+==========================================================================================================================================================================================
+
+                                                                      JWT ROLE BASED REGISTER AND LOGIN WITH REFRESH TOKEN VIA REACT
