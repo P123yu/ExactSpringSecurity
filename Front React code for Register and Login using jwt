@@ -1,0 +1,94 @@
+
+// React Register
+
+import axios from "axios";
+import React, { useState } from "react";
+
+function Register() {
+  const [register, setRegister] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegister({ ...register, [name]: value });
+  };
+
+  console.log(register, "register...");
+
+  const handleSubmit = () => {
+    axios.post("http://localhost:8082/register", register).then((res) => {
+      localStorage.setItem("jwtToken", res.data);
+      console.log(res);
+    });
+  };
+
+  return (
+    <div>
+      <div>
+        userName:
+        <input type="text" name="userName" onChange={handleChange} />
+        userPassword:
+        <input type="password" name="userPassword" onChange={handleChange} />
+        userCity:
+        <input type="text" name="userCity" onChange={handleChange} />
+        userRole:
+        <input type="text" name="role" onChange={handleChange} />
+      </div>
+      <button onClick={handleSubmit}>submit</button>
+    </div>
+  );
+}
+
+export default Register;
+
+============================================================================================================================
+
+// React Login 
+
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+function Login() {
+  const [info, setInfo] = useState({ userName: "", userPassword: "" });
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("jwtToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInfo({ ...info, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("http://localhost:8082/login", info, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("There was an error logging in:", error);
+    }
+  };
+
+  return (
+    <div>
+      <div>
+        userName:
+        <input type="text" name="userName" onChange={handleChange} />
+      </div>
+      <div>
+        userPassword:
+        <input type="text" name="userPassword" onChange={handleChange} />
+      </div>
+      <button onClick={handleSubmit}>Login</button>
+    </div>
+  );
+}
+
+export default Login;
