@@ -123,3 +123,92 @@ export default Login;
 ==========================================================================================================================================================================================
 
                                                                       JWT ROLE BASED REGISTER AND LOGIN WITH REFRESH TOKEN VIA REACT
+
+
+
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+function Login() {
+  const [info, setInfo] = useState({ userName: "", userPassword: "" });
+  const [token, setToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("jwtToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInfo({ ...info, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await loginUser();
+    } catch (error) {
+      try {
+        await refreshAndRetryLogin();
+      } catch (refreshError) {
+        console.error("Failed to refresh token and retry login", refreshError);
+      }
+    }
+  };
+
+  const loginUser = async () => {
+    const response = await axios.post("http://localhost:8082/login", info, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response.data);
+  };
+
+  const refreshAndRetryLogin = async () => {
+    const userName = info.userName; // Get the userName from the info state
+    const response = await axios.get(`http://localhost:8082/get/${userName}`);
+    const newRefreshToken = response.data.refreshModel.refreshToken;
+
+    setRefreshToken(newRefreshToken);
+
+    const refreshResponse = await axios.post(
+      `http://localhost:8082/refresh/${newRefreshToken}`
+    );
+    localStorage.clear();
+    localStorage.setItem("jwtToken", refreshResponse.data.jwtToken);
+
+    const newToken = refreshResponse.data.jwtToken;
+    setToken(newToken);
+
+    await loginUserWithNewToken(newToken);
+  };
+
+  const loginUserWithNewToken = async (newToken) => {
+    const response = await axios.post("http://localhost:8082/login", info, {
+      headers: {
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+    console.log(response.data, "login successfully again");
+  };
+
+  return (
+    <div>
+      <div>
+        userName:
+        <input type="text" name="userName" onChange={handleChange} />
+      </div>
+      <div>
+        userPassword:
+        <input type="text" name="userPassword" onChange={handleChange} />
+      </div>
+      <button onClick={handleSubmit}>Login</button>
+    </div>
+  );
+}
+
+export default Login;
+
