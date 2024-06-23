@@ -1,18 +1,17 @@
 package com.pracSecurity.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-
+import java.util.List;
 
 @Entity
 @Table(name="user_register")
@@ -26,17 +25,31 @@ import java.util.Collection;
 public class RegisterModel implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
 
     String userName;
     String userPassword;
     String userCity;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
+
+
+
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registerModel", fetch = FetchType.LAZY)
+    private RefreshModel refreshModel;
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));
     }
+
+
 
     @Override
     public String getPassword() {
